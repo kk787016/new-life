@@ -24,12 +24,5 @@ public class BoardController {
     public String detail() {
         return "board/detail";
     }
-    @GetMapping("/register")
-    public String registerForm() {
-        return "user/register";
-    }
-    @GetMapping("/login")
-    public String loginForm() {
-        return "user/login";
-    }
+
 }
