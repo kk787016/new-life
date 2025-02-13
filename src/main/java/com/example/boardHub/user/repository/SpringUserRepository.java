@@ -9,6 +9,6 @@ import java.util.Optional;
 @Repository
 public interface SpringUserRepository extends JpaRepository<User, Long> {
 
-    // 예시: userId로 사용자 찾기 (커스텀 쿼리 메서드)
+
 
 }

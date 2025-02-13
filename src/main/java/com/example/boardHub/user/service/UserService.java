@@ -15,6 +15,11 @@ public class UserService {
     @Autowired
     private SpringUserRepository userRepository;
 
+    public UserService(SpringUserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+
+
     public User registerUser(User user) {
         return userRepository.save(user);
     }
