@@ -20,16 +20,22 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
+    @Autowired
+    private BCryptPasswordEncoder passwordEncoder;
 
 
     public boolean loginUser(String userId, String password) {
 
-        boolean check_useID = userRepository.findByUserId(userId).isPresent();
-        if (check_useID){
-            if(check_useID != true && passwordEncoder.ma)
-            return true;
+        Optional<User> t = userRepository.findByUserId(userId);
+        if (t != null) {
+            // 비밀번호가 일치하는지 확인
+            if (passwordEncoder.matches(password, user.getPassword())) {
+                return true; // 인증 성공
+            } else {
+                return false; // 비밀번호 불일치
+            }
         } else {
-            throw new IllegalStateException("존재하지 않는 아이디입니다.");
+            return false; // 사용자 없음
         }
     }
 
