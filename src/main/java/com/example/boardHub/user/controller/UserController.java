@@ -1,6 +1,5 @@
 package com.example.boardHub.user.controller;
 
-import com.example.boardHub.user.model.User;
 import com.example.boardHub.user.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -31,9 +30,13 @@ public class UserController {
     @PostMapping("/login")
     public String login(@RequestParam String userId, @RequestParam String password, RedirectAttributes redirectAttributes) {
 
-
-
-        return "redirect:/";
+        boolean result_login = userService.loginUser(userId, password);
+        if (result_login) {
+            return "redirect:/";
+        } else {
+            redirectAttributes.addFlashAttribute("아이디 또는 비밀번호가 잘못되었습니다.");
+            return "redirect:/login";
+        }
     }
 
     @PostMapping("/register")
