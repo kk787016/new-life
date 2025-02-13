@@ -10,17 +10,17 @@ public class BoardController {
     // @Autowired
     // private BoardService boardService;
 
-    @GetMapping("/boards")
+    @GetMapping("/")
     public String list() {
-        return "board/list";
+        return "list";
     }
 
-    @GetMapping("boards/new")
+    @GetMapping("/new")
     public String createForm() {
         return "board/create";
     }
 
-    @GetMapping("boards/{id}")
+    @GetMapping("/{id}")
     public String detail() {
         return "board/detail";
     }

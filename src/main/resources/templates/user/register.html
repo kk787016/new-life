@@ -9,6 +9,10 @@
 <div class="container">
   <h1 class="my-4">회원가입</h1>
 
+  <div th:if="${errorMessage}" class="alert alert-danger" role="alert">
+    <span th:text="${errorMessage}"></span>
+  </div>
+
   <form action="/register" method="post">
     <div class="form-group">
       <label for="userId">아이디</label>
