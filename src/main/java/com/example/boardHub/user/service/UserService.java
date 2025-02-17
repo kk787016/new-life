@@ -22,22 +22,20 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
+
     @Autowired
     private PasswordEncoder passwordEncoder;
 
     public boolean loginUser(String userId, String password) {
-
-        Optional<User> optionalUser = userRepository.findByUserId(userId);
-        if (optionalUser.isPresent()) {
-            User user = optionalUser.get();
-            if (passwordEncoder.matches(password, user.getPassword())) {
-                return true;
-            } else {
-                return false;
-            }
-        } else {
+        User optionalUser = userRepository.findByUserId(userId).orElse(null);
+        if (optionalUser == null) {
             return false;
         }
+        if (!passwordEncoder.matches(password, optionalUser.getPassword())){
+            return false;
+        }
+
+        return true;
     }
 
 
