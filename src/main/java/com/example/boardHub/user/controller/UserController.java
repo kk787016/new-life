@@ -1,57 +1,61 @@
 package com.example.boardHub.user.controller;
 
+import com.example.boardHub.user.dto.UserRequestDto;
+import com.example.boardHub.user.model.User;
 import com.example.boardHub.user.service.UserService;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-@Controller
-//@RequestMapping("/user")
-public class UserController {
+import java.io.IOException;
+import java.util.Map;
 
-    @Autowired
-    private UserService userService;
+@Controller
+@RequestMapping("/user")
+
+
+public class UserController{
+
+    private final UserService userService;
 
     public UserController(UserService userService) {
         this.userService = userService;
     }
 
+
     @GetMapping("/register")
-    public String registerForm() {
-        return "user/register";
+    public String showRegisterPage() {
+        return "user/register"; // templates/user/register.html을 렌더링
     }
     @GetMapping("/login")
-    public String loginForm() {
-        return "user/login";
-    }
-
-    @PostMapping("/login")
-    public String login(@RequestParam String userId, @RequestParam String password, RedirectAttributes redirectAttributes) {
-
-        boolean isLoginSuccessful  = userService.loginUser(userId, password);
-        if (!isLoginSuccessful){
-            redirectAttributes.addFlashAttribute("아이디 또는 비밀번호가 잘못되었습니다.");
-            return "redirect:/login";
-        }
-        return "redirect:/";
-
+    public String showLoginPage() {
+        return "user/login"; // templates/user/register.html을 렌더링
     }
 
     @PostMapping("/register")
-    public String register(@RequestParam String userId, @RequestParam String password, @RequestParam String nickname, Model model, RedirectAttributes redirectAttributes) {
-
+    public ResponseEntity<?> register(@RequestBody UserRequestDto userDto) {
         try {
-            userService.registerUser(userId, password, nickname);
-            //model.addAttribute("회원 가입에 성공했습니다.");    //TODO 질문.
-            return "redirect:/";  // 회원가입 후 로그인 페이지로 리다이렉트
-
+            userService.registerUser(userDto.getUserId(), userDto.getPassword(), userDto.getNickname());
+            return ResponseEntity.ok().body(Map.of("message", "회원가입 성공"));
         } catch (IllegalStateException e) {
-            //model.addAttribute("errorMessage", e.getMessage());  // 중복 에러 메시지 전달
-            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
-            return "redirect:/register";  // 회원가입 페이지로 다시 이동
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        }
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody UserRequestDto userDto, HttpSession session) {
+        boolean isLoginSuccessful = userService.loginUser(userDto.getUserId(), userDto.getPassword());
+        if (!isLoginSuccessful) {
+            return ResponseEntity.status(401).body(Map.of("error", "아이디 또는 비밀번호가 잘못되었습니다."));
         }
 
+        session.setAttribute("loginUser", userDto.getUserId()); // 로그인 세션 저장
+        return ResponseEntity.ok().body(Map.of("message", "로그인 성공"));
     }
+
 }
