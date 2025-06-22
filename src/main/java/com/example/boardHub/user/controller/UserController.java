@@ -40,7 +40,7 @@ public class UserController{
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody UserRequestDto userDto) {
         try {
-            userService.registerUser(userDto.getUserId(), userDto.getPassword(), userDto.getNickname());
+            userService.registerUser(userDto.getUserId(), userDto.getPassword(), userDto.getUsername() , userDto.getNickname());
             return ResponseEntity.ok().body(Map.of("message", "회원가입 성공"));
         } catch (IllegalStateException e) {
             return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));

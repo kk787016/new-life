@@ -9,11 +9,11 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Service
 public class UserService {
-
 
     @Autowired
     private SpringUserRepository userRepository;
@@ -34,13 +34,12 @@ public class UserService {
         if (!passwordEncoder.matches(password, optionalUser.getPassword())){
             return false;
         }
-
         return true;
     }
 
 
     @Transactional
-    public void registerUser(String userId, String password, String nickname) {
+    public void registerUser(String userId, String password, String username ,String nickname) {
         if (userRepository.findByUserId(userId).isPresent()) {
             throw new IllegalStateException("이미 존재하는 아이디입니다.");
         }
@@ -50,8 +49,8 @@ public class UserService {
 
         String encodedPassword = passwordEncoder.encode(password);
         // 새로운 사용자 저장
-        User user = new User(userId, encodedPassword, nickname);  // createdDate 자동 설정됨
-        userRepository.save(user);
+        User newUser = User.createUser(userId, encodedPassword, username, nickname, LocalDateTime.now() );// createdDate 자동 설정됨
+        userRepository.save(newUser);
     }
 
 
